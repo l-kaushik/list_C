@@ -41,5 +41,6 @@ int main()
     setValue(&marks);
     show(&marks);
 
+    free(marks.base_ptr);
     return 0;
 }
