@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <assert.h>
@@ -21,6 +20,7 @@ typedef int bool;
         exit(EXIT_FAILURE); \
     } \
 } while (0)
+
 
 typedef struct myArray
 {
@@ -47,10 +47,15 @@ void show(list *AOF)
     }
     assert(AOF->used_size > 0);
 
+    printf("List items: [");
     for (int i = 0; i < AOF->used_size; i++)
     {
-        printf("%d\t", AOF->base_ptr[i]);
+        printf("%d", AOF->base_ptr[i]);
+        if (i < AOF->used_size - 1) {
+        printf(", ");
+        }
     }
+    printf("]");
 }
 
 void setValues(list *AOF, int count, ...)
@@ -81,7 +86,7 @@ int main()
 {
     list marks;
     createList(&marks, 10);
-    setValues(&marks, 7, 1,2,3,4,5);
+    setValues(&marks, 5, 1,2,3,4,5);
     show(&marks);
     free(marks.base_ptr);
 
