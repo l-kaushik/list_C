@@ -68,7 +68,7 @@ void setValues(list *AOF, int count, ...)
     int availSize = AOF->total_size - AOF->used_size;
     int newSize = AOF->total_size + count - availSize;
 
-    if (count >= availSize)
+    if (count > availSize)
     {
         AOF->base_ptr = (int *)realloc(AOF->base_ptr, newSize * sizeof(int));
         AOF->total_size = newSize;
@@ -111,13 +111,19 @@ void insert(list *AOF, int index, int element)
 
 }
 
+void append(list *AOF, int element)
+{
+    insert(AOF,AOF->used_size, element);
+}
+
 int main()
 {
     list marks;
-    createList(&marks, 10);
+    createList(&marks, 5);
     setValues(&marks, 5, 1, 2, 3, 4, 5);
-    show(&marks);
-    insert(&marks, 5, 25);
+    // show(&marks);
+    // insert(&marks, 5, 25);
+    append(&marks, 30);
     show(&marks);
     free(marks.base_ptr);
 
