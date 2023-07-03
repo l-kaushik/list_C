@@ -13,6 +13,15 @@ typedef int bool;
 #endif
 
 #define AOF address_of_object
+#define LIST(name,initialSize)\
+    list name;\
+    createList(&name, initialSize);\
+
+#define LIST_VAL(name,count,...)\
+    list name;\
+    createList(&name, count);\
+    setValues(&name,count,__VA_ARGS__)
+
 #define NULL_CHECK(ptr)                                                     \
     do                                                                      \
     {                                                                       \
@@ -82,6 +91,7 @@ void show(list *AOF)
 
 void setValues(list *AOF, int count, ...)
 {
+
     va_list args;
     va_start(args, count);
     int availSize = AOF->total_size - AOF->used_size;
@@ -136,10 +146,11 @@ void append(list *AOF, int element)
 
 int main()
 {
-    list marks;
-    createList(&marks, 5);
-    marks.setValues(marks.self, 5, 1, 2, 3, 4, 5);
-    marks.insert(marks.self, 5, 25);
+    // list marks;
+    // createList(&marks, 5);
+    // marks.setValues(marks.self, 5, 1, 2, 3, 4, 5);
+    LIST_VAL(marks,5,1,2,3,4,5);
+    marks.insert(marks.self, 2, 25);
     marks.append(marks.self, 30);
     marks.show(marks.self);
     free(marks.base_ptr);
