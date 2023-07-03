@@ -28,16 +28,35 @@ typedef struct myArray
     int total_size;
     int used_size;
     int *base_ptr;
+    void *self;
     bool isAllocated;
+
+    void (*show)();
+    void (*setValues)();
+    void (*insert)();
+    void (*append)();
+
 } list;
+
+void createList(list *, int);
+void show(list *);
+void setValues(list *, int, ...);
+void insert(list *, int, int);
+void append(list *, int);
 
 void createList(list *AOF, int tSize)
 {
+    AOF->self = (list *)AOF;
     AOF->total_size = tSize;
     AOF->used_size = 0;
     AOF->base_ptr = (int *)calloc(tSize, sizeof(int));
     NULL_CHECK(AOF->base_ptr);
     AOF->isAllocated = true;
+
+    AOF->show = show;
+    AOF->setValues = (void *)setValues;
+    AOF->insert = insert;
+    AOF->append = append;
 }
 
 void show(list *AOF)
@@ -88,13 +107,13 @@ void setValues(list *AOF, int count, ...)
 
 void insert(list *AOF, int index, int element)
 {
-    if(index > AOF->used_size)
+    if (index > AOF->used_size)
     {
-        printf("Error: index out of range, %d is the last index",AOF->used_size);
+        printf("Error: index out of range, %d is the last index", AOF->used_size);
         exit(EXIT_FAILURE);
     }
 
-    if(AOF->used_size <= AOF->total_size)
+    if (AOF->used_size <= AOF->total_size)
     {
         AOF->base_ptr = (int *)realloc(AOF->base_ptr, (AOF->total_size + 1) * sizeof(int));
         AOF->total_size += 1;
@@ -103,28 +122,26 @@ void insert(list *AOF, int index, int element)
 
     for (int i = AOF->used_size - 1; i >= index; i--)
     {
-        AOF->base_ptr[i+1] = AOF->base_ptr[i];
+        AOF->base_ptr[i + 1] = AOF->base_ptr[i];
     }
 
     AOF->base_ptr[index] = element;
     AOF->used_size += 1;
-
 }
 
 void append(list *AOF, int element)
 {
-    insert(AOF,AOF->used_size, element);
+    insert(AOF, AOF->used_size, element);
 }
 
 int main()
 {
     list marks;
     createList(&marks, 5);
-    setValues(&marks, 5, 1, 2, 3, 4, 5);
-    // show(&marks);
-    // insert(&marks, 5, 25);
-    append(&marks, 30);
-    show(&marks);
+    marks.setValues(marks.self, 5, 1, 2, 3, 4, 5);
+    marks.insert(marks.self, 5, 25);
+    marks.append(marks.self, 30);
+    marks.show(marks.self);
     free(marks.base_ptr);
 
     return 0;
