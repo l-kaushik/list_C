@@ -44,6 +44,8 @@ typedef struct myArray
     void (*setValues)();
     void (*insert)();
     void (*append)();
+    void (*delete)();
+    void (*destroy)();
 
 } list;
 
@@ -52,6 +54,8 @@ void show(list *);
 void setValues(list *, int, ...);
 void insert(list *, int, int);
 void append(list *, int);
+void deleteList(list *, int);
+void destroyList(list *);
 
 void createList(list *AOF, int tSize)
 {
@@ -66,6 +70,8 @@ void createList(list *AOF, int tSize)
     AOF->setValues = (void *)setValues;
     AOF->insert = insert;
     AOF->append = append;
+    AOF->delete = deleteList;
+    AOF->destroy = destroyList;
 }
 
 void show(list *AOF)
@@ -144,6 +150,39 @@ void append(list *AOF, int element)
     insert(AOF, AOF->used_size, element);
 }
 
+void deleteList(list *AOF, int index)
+{
+    if (index > AOF->used_size)
+    {
+        printf("Error: index out of range, %d is the last index", AOF->used_size);
+        exit(EXIT_FAILURE);
+    }
+
+    for(int i = index; i < AOF->used_size-1; i++)
+    {
+        AOF->base_ptr[i] = AOF->base_ptr[i + 1];
+    }
+
+    AOF->used_size -= 1;
+}
+
+void destroyList(list *AOF)
+{
+    free(AOF->base_ptr);
+    AOF->base_ptr = NULL; // Reset the pointer to NULL
+    AOF->self = NULL;     // Reset the self pointer to NULL
+    AOF->isAllocated = false;
+    AOF->total_size = 0;
+    AOF->used_size = 0;
+
+    AOF->show = NULL;
+    AOF->setValues = NULL;
+    AOF->insert = NULL;
+    AOF->append = NULL;
+    AOF->delete = NULL;
+    AOF->destroy = NULL;
+}
+
 int main()
 {
     // list marks;
@@ -153,7 +192,9 @@ int main()
     marks.insert(marks.self, 2, 25);
     marks.append(marks.self, 30);
     marks.show(marks.self);
-    free(marks.base_ptr);
+    marks.delete(marks.self, 2);
+    marks.show(marks.self);
+    marks.destroy(marks.self);
 
     return 0;
 }
