@@ -44,9 +44,18 @@ typedef struct myArray
     void (*setValues)();
     void (*insert)();
     void (*append)();
-    void (*delete)();
+    void (*pop)();
     void (*destroy)();
 
+    // void(*clear)();
+    // void(*copy)();
+    // void(*count)();
+    // void(*extend)();
+    // void(*index)();
+    // void(*insert)();
+    // void(*remove)();
+    // void(*reverse)();
+    // void(*sort)();
 } list;
 
 void createList(list *, int);
@@ -54,7 +63,7 @@ void show(list *);
 void setValues(list *, int, ...);
 void insert(list *, int, int);
 void append(list *, int);
-void deleteList(list *, int);
+void popItem(list *, int);
 void destroyList(list *);
 
 void createList(list *AOF, int tSize)
@@ -70,7 +79,7 @@ void createList(list *AOF, int tSize)
     AOF->setValues = (void *)setValues;
     AOF->insert = insert;
     AOF->append = append;
-    AOF->delete = deleteList;
+    AOF->pop = popItem;
     AOF->destroy = destroyList;
 }
 
@@ -150,7 +159,7 @@ void append(list *AOF, int element)
     insert(AOF, AOF->used_size, element);
 }
 
-void deleteList(list *AOF, int index)
+void popItem(list *AOF, int index)
 {
     if (index > AOF->used_size)
     {
@@ -179,7 +188,7 @@ void destroyList(list *AOF)
     AOF->setValues = NULL;
     AOF->insert = NULL;
     AOF->append = NULL;
-    AOF->delete = NULL;
+    AOF->pop = NULL;
     AOF->destroy = NULL;
 }
 
@@ -192,7 +201,7 @@ int main()
     marks.insert(marks.self, 2, 25);
     marks.append(marks.self, 30);
     marks.show(marks.self);
-    marks.delete(marks.self, 2);
+    marks.pop(marks.self, 2);
     marks.show(marks.self);
     marks.destroy(marks.self);
 
