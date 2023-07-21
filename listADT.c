@@ -39,6 +39,7 @@ typedef struct myArray
     int *base_ptr;
     void *self;
     bool isAllocated;
+    bool _CLEAR_;
 
     void (*show)();
     void (*setValues)();
@@ -46,8 +47,8 @@ typedef struct myArray
     void (*append)();
     void (*pop)();
     void (*destroy)();
+    void(*clear)();
 
-    // void(*clear)();
     // void(*copy)();
     // void(*count)();
     // void(*extend)();
@@ -65,6 +66,7 @@ void insert(list *, int, int);
 void append(list *, int);
 void popItem(list *, int);
 void destroyList(list *);
+void clear(list *);
 
 void createList(list *AOF, int tSize)
 {
@@ -74,6 +76,7 @@ void createList(list *AOF, int tSize)
     AOF->base_ptr = (int *)calloc(tSize, sizeof(int));
     NULL_CHECK(AOF->base_ptr);
     AOF->isAllocated = true;
+    AOF->_CLEAR_ = false;
 
     AOF->show = show;
     AOF->setValues = (void *)setValues;
@@ -81,6 +84,7 @@ void createList(list *AOF, int tSize)
     AOF->append = append;
     AOF->pop = popItem;
     AOF->destroy = destroyList;
+    AOF->clear = clear;
 }
 
 void show(list *AOF)
@@ -89,6 +93,12 @@ void show(list *AOF)
     {
         printf("Error: Memory is not allocated for list");
         exit(EXIT_FAILURE);
+    }
+
+    if(AOF->_CLEAR_ == true)
+    {
+        printf("List items: []");
+        return ;
     }
     assert(AOF->used_size > 0);
 
@@ -128,10 +138,13 @@ void setValues(list *AOF, int count, ...)
     AOF->used_size += count;
 
     va_end(args);
+
+    AOF->_CLEAR_ = false;
 }
 
 void insert(list *AOF, int index, int element)
 {
+
     if (index > AOF->used_size)
     {
         printf("Error: index out of range, %d is the last index", AOF->used_size);
@@ -152,11 +165,14 @@ void insert(list *AOF, int index, int element)
 
     AOF->base_ptr[index] = element;
     AOF->used_size += 1;
+
+    AOF->_CLEAR_ = false;
 }
 
 void append(list *AOF, int element)
 {
     insert(AOF, AOF->used_size, element);
+    AOF->_CLEAR_ = false;
 }
 
 void popItem(list *AOF, int index)
@@ -175,12 +191,23 @@ void popItem(list *AOF, int index)
     AOF->used_size -= 1;
 }
 
+void clear(list *AOF)
+{
+
+    AOF->base_ptr = (int *)realloc(AOF->base_ptr, 1 * sizeof(int));
+    AOF->_CLEAR_ = true;
+    AOF->total_size = 1;
+    AOF->used_size = 0;
+
+}
+
 void destroyList(list *AOF)
 {
     free(AOF->base_ptr);
     AOF->base_ptr = NULL; // Reset the pointer to NULL
     AOF->self = NULL;     // Reset the self pointer to NULL
     AOF->isAllocated = false;
+    AOF->_CLEAR_ = false;
     AOF->total_size = 0;
     AOF->used_size = 0;
 
@@ -201,7 +228,11 @@ int main()
     marks.insert(marks.self, 2, 25);
     marks.append(marks.self, 30);
     marks.show(marks.self);
-    marks.pop(marks.self, 2);
+    marks.clear(marks.self);
+    printf("\n");
+    marks.show(marks.self);
+    marks.pop(marks.self,3);
+    printf("\n");
     marks.show(marks.self);
     marks.destroy(marks.self);
 
