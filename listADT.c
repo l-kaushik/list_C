@@ -13,14 +13,14 @@ typedef int bool;
 #endif
 
 #define AOF address_of_object
-#define LIST(name,initialSize)\
-    list name;\
-    createList(&name, initialSize);\
+#define LIST(name, initialSize) \
+    list name;                  \
+    createList(&name, initialSize);
 
-#define LIST_VAL(name,count,...)\
-    list name;\
-    createList(&name, count);\
-    setValues(&name,count,__VA_ARGS__)
+#define LIST_VAL(name, count, ...) \
+    list name;                     \
+    createList(&name, count);      \
+    setValues(&name, count, __VA_ARGS__)
 
 #define NULL_CHECK(ptr)                                                     \
     do                                                                      \
@@ -47,15 +47,14 @@ typedef struct myArray
     void (*append)();
     void (*pop)();
     void (*destroy)();
-    void(*clear)();
-    int(*count)();
+    void (*clear)();
+    int (*count)();
+    void (*reverse)();
 
     // void(*copy)();
     // void(*extend)();
     // void(*index)();
-    // void(*insert)();
     // void(*remove)();
-    // void(*reverse)();
     // void(*sort)();
 } list;
 
@@ -68,6 +67,7 @@ void popItem(list *, int);
 void destroyList(list *);
 void clear(list *);
 int count(list *, int);
+void reverse(list *);
 
 void createList(list *AOF, int tSize)
 {
@@ -87,6 +87,7 @@ void createList(list *AOF, int tSize)
     AOF->destroy = destroyList;
     AOF->clear = clear;
     AOF->count = count;
+    AOF->reverse = reverse;
 }
 
 void show(list *AOF)
@@ -97,10 +98,10 @@ void show(list *AOF)
         exit(EXIT_FAILURE);
     }
 
-    if(AOF->_CLEAR_ == true)
+    if (AOF->_CLEAR_ == true)
     {
         printf("List items: []");
-        return ;
+        return;
     }
     assert(AOF->used_size > 0);
 
@@ -185,7 +186,7 @@ void popItem(list *AOF, int index)
         exit(EXIT_FAILURE);
     }
 
-    for(int i = index; i < AOF->used_size-1; i++)
+    for (int i = index; i < AOF->used_size - 1; i++)
     {
         AOF->base_ptr[i] = AOF->base_ptr[i + 1];
     }
@@ -200,18 +201,29 @@ void clear(list *AOF)
     AOF->_CLEAR_ = true;
     AOF->total_size = 1;
     AOF->used_size = 0;
-
 }
 
 int count(list *AOF, int num)
 {
     int count = 0;
-    for(int i = 0; i < AOF->used_size; i++)
+    for (int i = 0; i < AOF->used_size; i++)
     {
-        if(num == AOF->base_ptr[i])
+        if (num == AOF->base_ptr[i])
             count++;
     }
     return count;
+}
+
+void reverse(list *AOF)
+{
+    int temp = 0;
+
+    for (int i = 0; i < AOF->used_size / 2; i++)
+    {
+        temp = AOF->base_ptr[i];
+        AOF->base_ptr[i] = AOF->base_ptr[(AOF->used_size-1) - i];
+        AOF->base_ptr[(AOF->used_size-1) - i] = temp;
+    }
 }
 
 void destroyList(list *AOF)
@@ -237,15 +249,14 @@ int main()
     // list marks;
     // createList(&marks, 5);
     // marks.setValues(marks.self, 5, 1, 2, 3, 4, 5);
-    LIST_VAL(marks,5,1,2,3,4,5);
+    LIST_VAL(marks, 5, 1, 2, 3, 4, 5);
     marks.insert(marks.self, 2, 25);
     marks.append(marks.self, 30);
     marks.show(marks.self);
     printf("\n");
-    marks.setValues(marks.self,5,1,2,3,4,5);
-    printf("\n");
+    marks.reverse(marks.self);
     marks.show(marks.self);
-    printf("%d",marks.count(marks.self,5));
+
     marks.destroy(marks.self);
 
     return 0;
