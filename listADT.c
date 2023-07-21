@@ -48,9 +48,9 @@ typedef struct myArray
     void (*pop)();
     void (*destroy)();
     void(*clear)();
+    int(*count)();
 
     // void(*copy)();
-    // void(*count)();
     // void(*extend)();
     // void(*index)();
     // void(*insert)();
@@ -67,6 +67,7 @@ void append(list *, int);
 void popItem(list *, int);
 void destroyList(list *);
 void clear(list *);
+int count(list *, int);
 
 void createList(list *AOF, int tSize)
 {
@@ -85,6 +86,7 @@ void createList(list *AOF, int tSize)
     AOF->pop = popItem;
     AOF->destroy = destroyList;
     AOF->clear = clear;
+    AOF->count = count;
 }
 
 void show(list *AOF)
@@ -201,6 +203,17 @@ void clear(list *AOF)
 
 }
 
+int count(list *AOF, int num)
+{
+    int count = 0;
+    for(int i = 0; i < AOF->used_size; i++)
+    {
+        if(num == AOF->base_ptr[i])
+            count++;
+    }
+    return count;
+}
+
 void destroyList(list *AOF)
 {
     free(AOF->base_ptr);
@@ -228,12 +241,11 @@ int main()
     marks.insert(marks.self, 2, 25);
     marks.append(marks.self, 30);
     marks.show(marks.self);
-    marks.clear(marks.self);
+    printf("\n");
+    marks.setValues(marks.self,5,1,2,3,4,5);
     printf("\n");
     marks.show(marks.self);
-    marks.pop(marks.self,3);
-    printf("\n");
-    marks.show(marks.self);
+    printf("%d",marks.count(marks.self,5));
     marks.destroy(marks.self);
 
     return 0;
